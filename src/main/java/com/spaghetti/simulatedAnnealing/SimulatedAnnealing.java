@@ -35,6 +35,9 @@ public class SimulatedAnnealing {
             // Calculate the energy difference
             double deltaEnergy = newEnergy - currentEnergy;
 
+            System.out.println("Iteration: " + i + ", Current Solution: " + Arrays.toString(currentSolution) +
+                    ", Current Energy: " + currentEnergy + ", Temperature: " + T);
+
             // Decide whether to accept the new solution
             if (deltaEnergy < 0 || Math.exp(-deltaEnergy / temperature) > Math.random()) {
                 currentSolution = newSolution;
@@ -49,8 +52,9 @@ public class SimulatedAnnealing {
 
             // Cool down the temperature
             T *= coolingRate;
+            System.out.println("Ends of Iteration: " + i + ", New Solution: " + Arrays.toString(currentSolution) +
+                    ", New Energy: " + currentEnergy + ", Temperature: " + T);
         }
-
         return bestSolution;
     }
 
@@ -90,7 +94,7 @@ public class SimulatedAnnealing {
         int dimensionLength = 2;     // x1, x2
         double T0 = 100.0;          // Başlangıç sıcaklık
         double alpha = 0.95;        // Soğuma oranı
-        int maxIter = 1000;         // Maks iterasyon
+        int maxIter = 3000;         // Maks iterasyon
         double lb = -5;             // Alt sınır
         double ub = 5;              // Üst sınır
 
