@@ -25,6 +25,5 @@ public class Solution {
         System.out.println("======================= Steepest Descent Optimization =======================");
         SteepestDescent steepestDescent = new SteepestDescent(x1, x2, x3);
         steepestDescent.optimize(errorTolerance, stepSize, 100);
-
     }
 }
