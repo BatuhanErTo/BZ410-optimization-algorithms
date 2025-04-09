@@ -1,0 +1,1 @@
+- This repository contains the assignments for the BZ410 Optimization Algorithms course.
