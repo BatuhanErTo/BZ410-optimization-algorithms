@@ -16,6 +16,7 @@ public class SimulatedAnnealing {
     private final int maxIterations;
     private final double lowerBound;
     private final double upperBound;
+    private final COOLING_STRATEGY coolingStrategy;
 
     public Double[] runAlgorithm() {
         // Initialize the current solution
@@ -51,7 +52,7 @@ public class SimulatedAnnealing {
             }
 
             // Cool down the temperature
-            T *= coolingRate;
+            T = calculateCooling(T, coolingStrategy, i);
             System.out.println("Ends of Iteration: " + i + ", New Solution: " + Arrays.toString(currentSolution) +
                     ", New Energy: " + currentEnergy + ", Temperature: " + T);
         }
@@ -66,6 +67,24 @@ public class SimulatedAnnealing {
         return solution;
     }
 
+    private Double calculateCooling(Double temperature, COOLING_STRATEGY strategy, int index) {
+        Double newTemperature = temperature;
+        switch (strategy) {
+            case Linear:
+                newTemperature -= coolingRate;
+                break;
+            case Exponential:
+                newTemperature *= coolingRate;
+                break;
+            case Logarithmic:
+                newTemperature = temperature / Math.log(1 + index);
+                break;
+            default:
+                throw new IllegalArgumentException("NOT DEFINED STRATEGY");
+        }
+        return newTemperature;
+    }
+
     private double calculateEnergy(Double[] solution) {
         double sum = 0;
         for (Double dimension : solution) {
@@ -73,7 +92,6 @@ public class SimulatedAnnealing {
         }
         return sum;
     }
-
 
     private Double[] generateNewSolution(Double[] solution) {
         Double[] neighbor = solution.clone();
@@ -89,37 +107,70 @@ public class SimulatedAnnealing {
         return neighbor;
     }
 
+    private Double calculateMean(Double[] solutions) {
+        Double sum = 0.0;
+        for (Double i : solutions) {
+            sum += i;
+        }
+        return sum / solutions.length;
+    }
+
+    private Double calculateStandardDeviation(Double[] solutions) {
+        Double mean = calculateMean(solutions);
+        double deviationSum = 0.0;
+        for (Double solution : solutions) {
+            deviationSum = (solution - mean) * (solution - mean);
+        }
+        return Math.sqrt(deviationSum / solutions.length);
+    }
+
+    private enum COOLING_STRATEGY {
+        Linear,
+        Exponential,
+        Logarithmic
+    }
+
     public static void main(String[] args) {
         // Örnek parametreler
         int dimensionLength = 2;     // x1, x2
         double T0 = 100.0;          // Başlangıç sıcaklık
         double alpha = 0.95;        // Soğuma oranı
-        int maxIter = 3000;         // Maks iterasyon
+        int maxItr = 3000;         // Maks iterasyon
         double lb = -5;             // Alt sınır
         double ub = 5;              // Üst sınır
+        COOLING_STRATEGY strategy = COOLING_STRATEGY.Logarithmic;
 
+        int maxIteration = 30;
         // SimulatedAnnealing nesnesi oluştur
         SimulatedAnnealing sa = new SimulatedAnnealing(
                 dimensionLength,  // Kaç boyut
                 T0,               // Temperature
                 alpha,            // coolingRate
-                maxIter,          // maxIterations
+                maxItr,          // maxIterations
                 lb,               // lowerBound
-                ub                // upperBound
+                ub,
+                strategy// upperBound
         );
+        Double[] solutions = new Double[maxIteration];
+        for (int i = 0; i < maxIteration; i++) {
+            // Algoritmayı çalıştır
+            Double[] bestSol = sa.runAlgorithm();
 
-        // Algoritmayı çalıştır
-        Double[] bestSol = sa.runAlgorithm();
+            // Sonucu yazdır
+            System.out.println("Iteration: " + i + " Best solution found: " + Arrays.toString(bestSol));
 
-        // Sonucu yazdır
-        System.out.println("Best solution found: " + Arrays.toString(bestSol));
-
-        // Elde edilen en iyi fonksiyon değeri
-        double bestVal = 0;
-        for (double x : bestSol) {
-            bestVal += x*x;
+            // Elde edilen en iyi fonksiyon değeri
+            double bestVal = 0;
+            for (double x : bestSol) {
+                bestVal += x * x;
+            }
+            System.out.println("Iteration: " + i + " Objective value f(x) = " + bestVal);
+            solutions[i] = bestVal;
         }
-        System.out.println("Objective value f(x) = " + bestVal);
+        Double mean = sa.calculateMean(solutions);
+        Double standardDeviation = sa.calculateStandardDeviation(solutions);
+        System.out.println("Mean of solutions : " + mean);
+        System.out.println("Standard deviation of solutions : " + standardDeviation);
     }
-
 }
+    
