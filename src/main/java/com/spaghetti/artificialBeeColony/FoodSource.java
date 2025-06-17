@@ -58,9 +58,9 @@ public class FoodSource {
                 + (-1 + 2 * random.nextDouble())
                 * (fSources[i].solutionString[j] - fSources[k].solutionString[j]);
 
-        if (this.solutionString[j] > LB)
+        if (this.solutionString[j] < LB)
             this.solutionString[j] = LB;
-        if (this.solutionString[j] < UB)
+        if (this.solutionString[j] > UB)
             this.solutionString[j] = UB;
     }
 }
