@@ -1,8 +1,8 @@
-package com.spaghetti.differentialEvolutionAlgorithm;
+package com.spaghetti.differentialEvolution;
 
 import java.util.Random;
 
-public class DifferentialEvolutionAlgorithm {
+public class DifferentialEvolution {
     private double[][] initializePopulation(final int populationSize,
                                             final double lowerBound,
                                             final double upperBound,
@@ -98,7 +98,7 @@ public class DifferentialEvolutionAlgorithm {
         int maxGenerations = 1000;
 
         Random random = new Random(42);
-        DifferentialEvolutionAlgorithm dea = new DifferentialEvolutionAlgorithm();
+        DifferentialEvolution dea = new DifferentialEvolution();
 
         double[][] population = dea.initializePopulation(populationSize, lowerBound, upperBound, solutionDimension, random);
 
